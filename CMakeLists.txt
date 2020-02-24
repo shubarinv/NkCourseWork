@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(VL_CourseWork)
+project(NK_CourseWork)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/ ${CMAKE_MODULE_PATH})
 find_package(SDL2 REQUIRED)
@@ -26,14 +26,14 @@ link_libraries(
      #   SDLmain # Sadly not included in SDL_LIBRARY variable
 )
 set(CMAKE_CXX_STANDARD 17)
-#add_executable(VL_CourseWork ex1main.cpp)
-add_executable(VL_CourseWork driver.cpp game/UI/ui_base.hpp game/screenManager.hpp game/UI/ui_main_menu.hpp game/UI/ui_button.hpp game/input_manager.hpp game/field.hpp game/Object.hpp game/weight.hpp game/UI/ui_add_object.hpp)
+#add_executable(NK_CourseWork ex1main.cpp)
+add_executable(NK_CourseWork driver.cpp game/UI/ui_base.hpp game/screenManager.hpp game/UI/ui_main_menu.hpp game/UI/ui_button.hpp game/input_manager.hpp game/field.hpp game/Object.hpp game/weight.hpp )
 include_directories(${SDL2_INCLUDE_DIR}
         ${SDL2_IMAGE_INCLUDE_DIR}
         #  ${SDL2_MIXER_INCLUDE_DIR}
         ${SDL2TFF_LIBRARY}
         )
-target_link_libraries(VL_CourseWork ${SDL2_LIBRARY}
+target_link_libraries(NK_CourseWork ${SDL2_LIBRARY}
         ${SDL2_IMAGE_LIBRARY}
         # ${SDL2_MIXER_LIBRARY}
         ${SDL2TFF_LIBRARY}

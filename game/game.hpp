@@ -24,9 +24,7 @@ private:
 	SDL_Renderer *ren{};
 	InputManager *inputManager{};
 	ScreenManager *uiManager;
-	Field*field{};
-	Uint64 eButtonPress = 0;
-	SDL_Surface *baseLayer;
+	Field *field{};
 	char state = 'm';///< r-playing game| p-pause| m-main_Menu| e-Editing Field
 public:
 	Game() {
@@ -36,8 +34,7 @@ public:
 			SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, "%s", error.c_str());
 			throw std::runtime_error("Unable to init SDL2");
 		}
-		if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) != IMG_INIT_PNG)
-		{
+		if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) != IMG_INIT_PNG) {
 			std::string error = SDL_GetError();
 			SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, "%s", error.c_str());
 			throw std::runtime_error("Unable to init SDL2_Image");
@@ -68,14 +65,11 @@ public:
 		uiManager = new ScreenManager(SDL_GetWindowSurface(win), ren, win,
 		                              inputManager); //init ScreenManager and font related stuff
 		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "SDL2 init - Good\nGame Start");
-		field=new Field(uiManager);
+		field = new Field(uiManager);
 //showRules();
 		run(); // Starts the game
 	}
 
-	struct twoInt {
-		int a{0}, b{0};
-	};
 private:
 	void showRules() {
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
@@ -90,7 +84,7 @@ private:
 		Uint64 curTime = 0;
 		Uint64 endTime = 0;
 
-		int frameDelay = 4;
+		int frameDelay = 1;
 		bool showDialog = true;
 		UI_MainMenu uiMainMenu(uiManager, win);
 		while (!inputManager->quitEventCheck() && state != 'q') {
@@ -118,7 +112,7 @@ private:
 				uiMainMenu.show();
 				state = uiMainMenu.act();
 			}
-			if(state=='r'){
+			if (state == 'r') {
 				field->redraw();
 				field->checkForGrab();
 			}

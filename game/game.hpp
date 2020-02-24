@@ -115,6 +115,8 @@ class Game {
 	  }
 	  if (state == 'r') {
 		field->redraw();
+		uiManager->printText("Upper length: "+std::to_string(field->GetUpperLength()),10,10,{0,0,0,255},16, false);
+		uiManager->printText("Lower length: "+std::to_string(field->GetLowerLength()),uiManager->getWindowResolutionX()-uiManager->getTextSize("Lower length: "+std::to_string(field->GetLowerLength()),16).a,10,{0,0,0,255},16, false);
 		field->checkForGrab();
 	  }
 	  SDL_RenderPresent(ren);

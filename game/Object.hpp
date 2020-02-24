@@ -22,10 +22,23 @@ class Object {
  private:
   ScreenManager *screenManager{};
   twoInt location;
+  int widthSpawnOverride = 0;
+
+ public:
+  void SetLocation(const twoInt &location) {
+	Object::location = location;
+  }
+
+ private:
   SDL_Texture *sprite;
   twoInt size;
   twoInt offset;
   bool isGrabAble{true};
+
+ public:
+  [[nodiscard]] bool IsGrabAble() const {
+	return isGrabAble;
+  }
 
  public:
   [[nodiscard]] const twoInt &getLocation() const {
@@ -38,14 +51,9 @@ class Object {
 
  private:
   std::string spriteName{};
-  [[deprecated]] int weight{0};
   bool isGrabbed{false};
 
  public:
-  [[deprecated]] int getWeight() const {
-	return weight;
-  }
-
   [[nodiscard]] bool getGrabbed() const {
 	return isGrabbed;
   }
@@ -53,8 +61,7 @@ class Object {
   void redraw() {
 	updateLocation();
 	screenManager->renderTexture(sprite, location.a, location.b, size.a, size.b);
-	printWeightLabel();
-	//		std::cout<<this<< " is grabbed: "<<getGrabbed()<<std::endl;
+	if (!isGrabAble) printObjectSize();
   }
 
   void setIsGrabbed(bool _isGrabbed) {
@@ -68,9 +75,10 @@ class Object {
 
   bool checkCollision(twoInt x_y, std::list<Object> *objects) {
 	if ((x_y.a >= location.a && x_y.a <= location.a + size.a) && (x_y.b >= location.b && x_y.b <= location.b + size.b)) {
-	  //		std::cout << "Hover over: " << this << std::endl;
 	  if (!isGrabAble) {
-		objects->emplace_back(weight, spriteName, screenManager, location.a, location.b, size.a, size.b, true, true);
+		if (widthSpawnOverride > 0) objects->emplace_back(spriteName, screenManager, location.a, location.b, widthSpawnOverride, true);
+		else
+		  objects->emplace_back(spriteName, screenManager, location.a, location.b, size.a, true);
 		objects->back().setOffset(location.a - x_y.a, location.b - x_y.b);
 		objects->back().setIsGrabbed(true);
 		return true;
@@ -93,16 +101,8 @@ class Object {
   static bool removalCheck(const Object &obj) {
 	return (obj.isGrabAble && (obj.getLocation().b < 0));
   }
-  void setWeight(int _weight) {
-	if (_weight >= 0)
-	  weight = _weight;
-	else {
-	  std::cout << "Invalid Weight: _weight is negative" << std::endl;
-	  weight = 0;
-	}
-  }
-  explicit Object(std::string _fileName = "", ScreenManager *pScreenManager = nullptr, int x = 100,
-		 int y = 200, bool _isGrabAble = true) {
+
+  explicit Object(std::string _fileName = "", ScreenManager *pScreenManager = nullptr, int x = 100, int y = 200, int _width = -1, bool _isGrabAble = true, int _widthSpawnOverride = 0) {
 	if (pScreenManager == nullptr) {
 	  SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, "Object::Object() got empty screenManager");
 	  throw(std::runtime_error("Object::Object() pScreenManager is NULL"));
@@ -113,60 +113,29 @@ class Object {
 	isGrabAble = _isGrabAble;
 	location.a = x;
 	location.b = y;
-	size.a = ScreenManager::getTextureSize(sprite).a*screenManager->getWindowResolutionX()/64;
-	size.b = ScreenManager::getTextureSize(sprite).b*screenManager->getWindowResolutionY()/64;
-  }
-
-  [[deprecated]] explicit Object(int _weight = 0, std::string _fileName = "", ScreenManager *pScreenManager = nullptr, int x = 100,
-						int y = 200, int w = 40, int h = 40, bool ignoreSizeLimit = false, bool _isGrabAble = true) {
-	if (pScreenManager == nullptr) {
-	  SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, "Object::Object() got empty screenManager");
-	  throw(std::runtime_error("Object::Object() pScreenManager is NULL"));
-	}
-	screenManager = pScreenManager;
-
-	if (_weight >= 0)
-	  weight = _weight;
-	else {
-	  std::cout << "Invalid Weight: _weight is negative" << std::endl;
-	  weight = 0;
-	}
-
-	spriteName = std::move(_fileName);
-	sprite = screenManager->loadTexture(spriteName);
-	isGrabAble = _isGrabAble;
-	location.a = x;
-	location.b = y;
-
-	if (w == -1 || h == -1) {
-	  size.a = ScreenManager::getTextureSize(sprite).a*screenManager->getWindowResolutionX()/2580;
-	  size.b = ScreenManager::getTextureSize(sprite).b*screenManager->getWindowResolutionY()/1440;
+	if (_width == -1) {
+	  size.a = ScreenManager::getTextureSize(sprite).a * screenManager->getWindowResolutionX() / 1280;
+	  size.b = ScreenManager::getTextureSize(sprite).b * screenManager->getWindowResolutionY() / 720;
 	} else {
-	  if (!ignoreSizeLimit) {
-		if (w < 40) size.a = 40;
-		if (h < 40) {
-		  size.b = 40;
-		  return;
-		}
+	  size.a = (int)(_width * (screenManager->getWindowResolutionX() / 1280.f));
+	  if (size.a < size.b) {
+		size.b = ((float)ScreenManager::getTextureSize(sprite).a / ScreenManager::getTextureSize(sprite).b) * size.a;
+	  } else {
+		size.b = ((float)ScreenManager::getTextureSize(sprite).b / ScreenManager::getTextureSize(sprite).a) * size.a;
 	  }
-	  size.a = w;
-	  size.b = h;
 	}
+	widthSpawnOverride = _widthSpawnOverride;
   }
 
-  ///@todo print size instead
-  [[deprecated]]void printWeightLabel() {
-	if (weight >= 1000000) {
-	  screenManager->printText(std::to_string(weight / 1000000) + " T", location.a + size.a / 2,
-							   location.b + size.b / 2, {255, 0, 0}, 15, true);
-	  ;
-	} else if (weight >= 1000 && weight < 1000000) {
-	  screenManager->printText(std::to_string((int)(weight / 1000)) + " KG", location.a + size.a / 2,
-							   location.b + size.b / 2, {255, 0, 0}, 15, true);
-	} else if (weight < 1000) {
-	  screenManager->printText(std::to_string(weight) + " G", location.a + size.a / 2, location.b + size.b / 2,
-							   {255, 0, 0}, 15,
-							   true);
+  void printObjectSize() {
+	if (widthSpawnOverride > 0) {
+	  if (widthSpawnOverride < 100) { screenManager->printText(std::to_string(widthSpawnOverride) + " См", location.a + size.a / 2, location.b - 5, {255, 0, 0},
+															   15, true); }
+	  if (widthSpawnOverride >= 100) { screenManager->printText(std::to_string(widthSpawnOverride / 100) + " М   " + std::to_string(widthSpawnOverride % 100) + " CM", location.a + size.a / 2, location.b - 5, {255, 0, 0}, 15, true); }
+	} else {
+	  if (size.a < 100) { screenManager->printText(std::to_string(size.a) + " См", location.a + size.a / 2, location.b - 5, {255, 0, 0},
+												   15, true); }
+	  if (size.a >= 100) { screenManager->printText(std::to_string(size.a / 100) + " М   " + std::to_string(size.a % 100) + " CM", location.a + size.a / 2, location.b - 5, {255, 0, 0}, 15, true); }
 	}
   }
 };

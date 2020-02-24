@@ -25,11 +25,11 @@ private:
 	twoInt offset;
 	bool isGrabAble{true};
 public:
-	const twoInt &getLocation() const {
+	[[nodiscard]] const twoInt &getLocation() const {
 		return location;
 	}
 
-	const twoInt &getSize() const {
+	[[nodiscard]] const twoInt &getSize() const {
 		return size;
 	}
 
@@ -138,7 +138,7 @@ public:
 		}
 	}
 
-
+///@todo print size instead
 	void printWeightLabel() {
 		if (weight >= 1000000) {
 			screenManager->printText(std::to_string(weight / 1000000) + " T", location.a + size.a / 2,
@@ -152,6 +152,8 @@ public:
 			                         true);
 		}
 	}
+
+
 
 
 };

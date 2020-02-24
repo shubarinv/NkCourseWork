@@ -91,7 +91,7 @@ public:
 	}
 
 
-	twoInt countSidesWeight() {
+	twoInt countSidesWeight() { ///@brief counts weight of each side
 		int leftWeight{0};
 		int rightWeight{0};
 		for (const Object &obj:objectsOnField) {
@@ -107,7 +107,7 @@ public:
 		return {leftWeight, rightWeight};
 	}
 
-	void redraw() {
+	void redraw() { ///<@brief redraws game field
 		addObjectsToLists();
 		screenManager->renderTexture(weight_base, screenManager->getWindowResolutionX() / 2 -
 		                                          ScreenManager::getTextureSize(weight_base).a / 2,
@@ -135,7 +135,7 @@ public:
 
 	}
 
-	void checkForGrab() {
+	void checkForGrab() { ///<@brief grabs object that is mouse hover if LMB is pressed
 		twoInt mouseLocation;
 		mouseLocation.a = screenManager->getInputManager()->getMouseCoords().x;
 		mouseLocation.b = screenManager->getInputManager()->getMouseCoords().y;

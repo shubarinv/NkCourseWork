@@ -31,7 +31,7 @@ public:
 			throw (std::runtime_error("Field::Field() pScreenManager is NULL"));
 		}
 		screenManager = pScreenManager;
-
+		///todo update sprites
 		objectsOnField.emplace_back(10, "Sprites/Weights.png", screenManager, 5,
 		                            screenManager->getWindowResolutionY() - 45, 40, 40,
 		                            false, false);
@@ -72,11 +72,12 @@ public:
 		weight_plate_right = screenManager->loadTexture("Sprites/Weight_Plate.png");
 	}
 
-	char determinePosition(const Object *obj) {
+	char determinePosition(const Object *obj) { ///<determines in which part of the screen is object located
 		int l_offset{50};
 		int r_offset{50};
 		if (left_Weight > right_Weight)l_offset = 100;
 		if (right_Weight > left_Weight)r_offset = 100;
+		///@todo rewrite so that it will determine upper and lower part of the screen instead if left/right
 		if ((obj->getLocation().a >= 60 &&
 		     obj->getLocation().a + obj->getSize().a < 60 + ScreenManager::getTextureSize(weight_plate_left).a) &&
 		    obj->getLocation().b <= screenManager->getWindowResolutionY() / 2 + l_offset) {
@@ -90,7 +91,7 @@ public:
 		return 'u';
 	}
 
-
+	///@todo rewrite so that it will count object size instead of weight
 	twoInt countSidesWeight() { ///@brief counts weight of each side
 		int leftWeight{0};
 		int rightWeight{0};
@@ -108,7 +109,7 @@ public:
 	}
 
 	void redraw() { ///<@brief redraws game field
-		addObjectsToLists();
+		addObjectsToLists();///Todo remove this deprecated function
 		screenManager->renderTexture(weight_base, screenManager->getWindowResolutionX() / 2 -
 		                                          ScreenManager::getTextureSize(weight_base).a / 2,
 		                             screenManager->getWindowResolutionY() -
@@ -161,11 +162,13 @@ public:
 		}
 	}
 
-	[[deprecated]]void addObjectsToLists() {
+	[[deprecated]]void addObjectsToLists() {///<@todo remove this
 		left_Weight = countSidesWeight().a;
 		right_Weight = countSidesWeight().b;
 	}
+	void snapObjects(){///@todo add object side snapping
 
+	}
 
 };
 

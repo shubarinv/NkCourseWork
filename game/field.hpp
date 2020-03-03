@@ -41,9 +41,9 @@ class Field {
 	objectsOnField.emplace_back("Sprites/parrot.png", screenManager, 10, screenManager->getWindowResolutionY() - 32, 16, false);
 	objectsOnField.emplace_back("Sprites/snake.png", screenManager, 64, screenManager->getWindowResolutionY() - 32, 64, false, 16 * 38);
 	objectsOnField.emplace_back("Sprites/car.png", screenManager, 64 + 84, screenManager->getWindowResolutionY() - 32, 64, false, 460);
-	objectsOnField.emplace_back("Sprites/Cat.png", screenManager, 64 + 84+84, screenManager->getWindowResolutionY() - 42, 64, false, 50);
-	objectsOnField.emplace_back("Sprites/phone.jpg", screenManager, 64 + 84+84+84, screenManager->getWindowResolutionY() - 64, 32, false, 8);
-	objectsOnField.emplace_back("Sprites/wheel.jpg", screenManager, 64 + 84+84+84+84, screenManager->getWindowResolutionY() - 64, 64, false, 64);
+	objectsOnField.emplace_back("Sprites/Cat.png", screenManager, 64 + 84 + 100, screenManager->getWindowResolutionY() - 42, 42, false, 50);
+	objectsOnField.emplace_back("Sprites/phone.jpg", screenManager, 64 + 84 + 84 + 84, screenManager->getWindowResolutionY() - 42, 24, false, 8);
+	objectsOnField.emplace_back("Sprites/wheel.jpg", screenManager, 64 + 84 + 84 + 84 + 64, screenManager->getWindowResolutionY() - 42, 42, false, 64);
   }
 
   char determinePosition(const Object *obj) {///< determines in which part of the screen is object located
@@ -90,7 +90,9 @@ class Field {
 	SDL_RenderDrawLine(screenManager->getRenderer(), upperLength - 1, screenManager->getWindowResolutionY() / 2, upperLength - 1, screenManager->getWindowResolutionY() / 2 - 40);
 	SDL_RenderDrawLine(screenManager->getRenderer(), upperLength, screenManager->getWindowResolutionY() / 2, upperLength, screenManager->getWindowResolutionY() / 2 - 40);
 	SDL_RenderDrawLine(screenManager->getRenderer(), upperLength + 1, screenManager->getWindowResolutionY() / 2, upperLength + 1, screenManager->getWindowResolutionY() / 2 - 40);
-	if (upperLength < 100)
+	if(upperLength<20)
+	  screenManager->printText(std::to_string(upperLength) + " CM", upperLength, screenManager->getWindowResolutionY() / 2 - 50, {255, 80, 80, 255}, 16, false);
+	else if (upperLength < 100)
 	  screenManager->printText(std::to_string(upperLength) + " CM", upperLength, screenManager->getWindowResolutionY() / 2 - 50, {255, 80, 80, 255}, 16, true);
 	if (upperLength >= 100)
 	  screenManager->printText(std::to_string(upperLength / 100) + " M  " + std::to_string(upperLength % 100) + " CM", upperLength, screenManager->getWindowResolutionY() / 2 - 50, {255, 80, 80, 255}, 16, true);
@@ -98,7 +100,9 @@ class Field {
 	SDL_RenderDrawLine(screenManager->getRenderer(), lowerLength - 1, screenManager->getWindowResolutionY() / 2, lowerLength - 1, screenManager->getWindowResolutionY() / 2 + 40);
 	SDL_RenderDrawLine(screenManager->getRenderer(), lowerLength, screenManager->getWindowResolutionY() / 2, lowerLength, screenManager->getWindowResolutionY() / 2 + 40);
 	SDL_RenderDrawLine(screenManager->getRenderer(), lowerLength + 1, screenManager->getWindowResolutionY() / 2, lowerLength + 1, screenManager->getWindowResolutionY() / 2 + 40);
-	if (lowerLength < 100)
+	if(lowerLength<20)
+	  screenManager->printText(std::to_string(lowerLength) + " CM", lowerLength, screenManager->getWindowResolutionY() / 2 + 50, {255, 80, 80, 255}, 16, false);
+	else if (lowerLength < 100)
 	  screenManager->printText(std::to_string(lowerLength) + " CM", lowerLength, screenManager->getWindowResolutionY() / 2 + 50, {255, 80, 80, 255}, 16, true);
 	if (lowerLength >= 100)
 	  screenManager->printText(std::to_string(lowerLength / 100) + " M  " + std::to_string(lowerLength % 100) + " CM", lowerLength, screenManager->getWindowResolutionY() / 2 + 50, {255, 80, 80, 255}, 16, true);
@@ -152,6 +156,8 @@ class Field {
 		} else {//lower part of the screen
 		  obj.SetLocation({lower_length, obj.getLocation().b});
 		  lower_length += obj.getSize().a;
+		  if(lower_length>=screenManager->getWindowResolutionX())
+			obj.SetLocation({-1000,-1000});
 		}
 	  }
 	}

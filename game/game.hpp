@@ -40,12 +40,11 @@ class Game {
 	  SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, "%s", error.c_str());
 	  throw std::runtime_error("Unable to init SDL2_Image");
 	  SDL_Quit();
-	}
-	//SDL_GetCurrentDisplayMode(0, &DM);
+	}SDL_GetCurrentDisplayMode(0, &DM);
 	auto Width = DM.w;
 	auto Height = DM.h;
-	win = SDL_CreateWindow("WeightsComp", 0, 40, 1280, 720, SDL_WINDOW_SHOWN & SDL_WINDOW_OPENGL);
-
+	win = SDL_CreateWindow("Well, that's unfortunate", 0, 0, Width, Height, SDL_WINDOW_SHOWN);
+	SDL_SetWindowFullscreen(win, SDL_WINDOW_FULLSCREEN);
 	if (win == nullptr) {
 	  std::string error = SDL_GetError();
 	  SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, "%s", error.c_str());

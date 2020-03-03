@@ -117,7 +117,7 @@ class Object {
 	  size.a = ScreenManager::getTextureSize(sprite).a * screenManager->getWindowResolutionX() / 1280;
 	  size.b = ScreenManager::getTextureSize(sprite).b * screenManager->getWindowResolutionY() / 720;
 	} else {
-	  size.a = (int)(_width * (screenManager->getWindowResolutionX() / 1280.f));
+	  size.a = (int)(_width * (screenManager->getWindowResolutionX() / 1920.f));
 	  if (size.a < size.b) {
 		size.b = ((float)ScreenManager::getTextureSize(sprite).a / ScreenManager::getTextureSize(sprite).b) * size.a;
 	  } else {
